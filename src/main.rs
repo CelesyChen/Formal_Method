@@ -5,7 +5,7 @@ mod robdd;
 
 
 fn main() {
-    let input = r#"s->AF(ktn)"#;
+    let input = r#"AG( (p -> (AF(q & (r | T)))) & (EG(F -> (AX(r)))) )"#;
     let tokens = tokenizer::tokenize(input);
     println!("Tokens: {:?}", tokens);
 
@@ -13,6 +13,7 @@ fn main() {
     let ast = parser.parse();
     println!("AST: {:?}", ast);
 
-    let ast = ast.normalize();
+    let ast = ast.norm_and_opt();
     println!("normalized AST: {:?}", ast);
+
 }
