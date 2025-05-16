@@ -33,13 +33,12 @@ $"_program" -> "_vad _spec" \
 "_assign" -> "ASSIGN _ni"\
 "_ni" -> "(_init | _next) _ni" | epsilon \
 "_init" -> "init(id) := num|id|True|False;"$][
-$"_next" -> "next(id) := _stmt;"\
-"_stmt" -> "_case_stmt | {_num_list}" \
-"_num_list" -> "" \
-"_case_stmt" -> "case _case_lists esae;"\
-"_case_lists" -> "id = num : (num | _num_list);_case_lists"\
+$"_next" -> "next(id) := (_case_stmt | {_num_list});"\
+"_num_list" -> "num _num_list" | epsilon \
+"_case_stmt" -> "case _case_list esae"\
+"_case_list" -> "id = num : (num | {_num_list});_case_list"\
 "_define" -> "DEFINE _def_list" \
-"_def_list" -> "id := id in {_num_list}" \
+"_def_list" -> "id := id in {_num_list} _def_list" \
 "_spec" -> "CTLSPEC ctl_term _spec" | epsilon \
 $
 ]
