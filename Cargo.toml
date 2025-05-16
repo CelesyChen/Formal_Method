@@ -8,7 +8,3 @@ edition = "2024"
 [[bin]]
 name = "robdd"
 path = "src/main.rs"
-
-[[bin]]
-name = "cdcl"
-path = "src/cdcl.rs"
