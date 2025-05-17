@@ -1,7 +1,7 @@
 digraph main{
   rankdir="TD"
   start [label="输入ssmv文件", shape=parallelogram]
-  parse1 [label="解析ssmv文件，并将\nVAR, ASSIGN, DEFINE\n部分转为", shape=box]
+  parse1 [label="解析ssmv文件，并将\nVAR, ASSIGN, DEFINE\n部分转为状态转换图", shape=box]
   parse2 [label="解析CTLSPEC部分",shape=box]
   robdd [label="ROBDD验证", shape=box]
   end [label="输出结果", shape=parallelogram]

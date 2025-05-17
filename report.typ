@@ -11,9 +11,9 @@
 
 == 目标
 
-我们要完成一个类似NuSMV的程序，不妨叫他ssmv(for simple smv)，但是它的文法可能会有所改变(为了更简单地写编译器)，并且在最后使用它完成死锁的证明。
+我们要完成一个类似NuSMV的程序，它改变了一些NuSMV的语法，并且只取了NuSMV的一小个子集，不妨叫他ssmv(for simple smv)，但是它的文法可能会有所改变(为了更简单地写编译器)，并且在最后使用它完成死锁的证明。
 
-形象地说，它的架构如下：
+形象且概括地说，它的架构如下：
 
 #figure(image("fig/start.svg"), caption: "程序架构图")
 
@@ -21,7 +21,7 @@
 
 == ssmv的文法
 
-整个程序的文法如下,注意前有\_的是非终止符号，以及\_case\_list处有个\_，这个是默认的意思：
+整个程序的文法如下,注意前有\_的是非终止符号，以及\_case\_list处有个\_，这个是default的符号：
 #par("")
 
 #grid(columns: (1fr, 1fr))[
@@ -39,12 +39,11 @@ $"_next" -> "next(id) := (_case_stmt | {_num_list});"\
 "_case_list" -> "id = (num | _) : (num | {_num_list});_case_list"\
 "_define" -> "DEFINE _def_list" \
 "_def_list" -> "id := id in {_num_list} _def_list" \
-"_spec" -> "CTLSPEC ctl_term _spec" | epsilon \
+"_spec" -> "CTLSPEC ctlexpr _spec" | epsilon \
 $
 ]
 
-
-其中ctl_term会放到下面的CTL文法里解析，num/id等都会在词法分析时被tokenizer区分出来。
+在词法分析阶段，我们提取出所有的token，并且识别num/id/ctlexpr，ctlexpr将在CTL解析处使用。
 
 == CTL的文法
 
@@ -59,6 +58,12 @@ N &-> ! N \ N &-> P \ P &-> "AG"(S) \ P &-> "AF"(S)
 P &-> (S) \ P &-> T \ P &-> F \ P &-> id$]
 
 == Rust
+
+我们将会使用Rust来编写这个程序，尽管已经存在flex和bison这类能高效完成(并且也在编译原理课程上使用过的)lexer/parser工作的工具，这是因为如下考量：
+
++ Cargo，因为我不怎么会写Cmake，并且可以解决麻烦的依赖问题。
++ 可以编译成WASM： 如果有机会我想把这个工具包装到网站上。
++ 最后，也是最重要的，因为我还没试过使用Rust做过比较大的项目，所以想试试看。
 
 == 死锁证明
 
