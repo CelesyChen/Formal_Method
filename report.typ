@@ -44,7 +44,7 @@ $
 ]
 
 
-其中ctl_term会放到下面的CTL文法里解析。
+其中ctl_term会放到下面的CTL文法里解析，num/id等都会在词法分析时被tokenizer区分出来。
 
 == CTL的文法
 
