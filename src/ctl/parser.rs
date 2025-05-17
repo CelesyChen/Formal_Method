@@ -1,5 +1,5 @@
-use crate::tokenizer4ctl::*;
-use crate::ast::*;
+use crate::ctl::tokenizer::*;
+use crate::ctl::ast::*;
 
 pub struct CtlParser {
     tokens: Vec<Token>,

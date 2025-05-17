@@ -21,7 +21,7 @@
 
 == ssmv的文法
 
-整个程序的文法如下,注意前有\_的是非终止符号：
+整个程序的文法如下,注意前有\_的是非终止符号，以及\_case\_list处有个\_，这个是默认的意思：
 #par("")
 
 #grid(columns: (1fr, 1fr))[
@@ -36,7 +36,7 @@ $"_program" -> "_vad _spec" \
 $"_next" -> "next(id) := (_case_stmt | {_num_list});"\
 "_num_list" -> "num _num_list" | epsilon \
 "_case_stmt" -> "case _case_list esae"\
-"_case_list" -> "id = num : (num | {_num_list});_case_list"\
+"_case_list" -> "id = (num | _) : (num | {_num_list});_case_list"\
 "_define" -> "DEFINE _def_list" \
 "_def_list" -> "id := id in {_num_list} _def_list" \
 "_spec" -> "CTLSPEC ctl_term _spec" | epsilon \

@@ -1,17 +1,21 @@
-mod tokenizer4ctl;
-mod ctl_parser;
-mod ast;
+mod ctl;
+use ctl::tokenizer::{tokenize as ctl_tokenize};
+// use ctl::parser as ctl_parser;
+// use ctl::ast as ctl_ast;
+
+use std::io::Read;
+mod ssvm;
+use ssvm::tokenizer::{tokenize as ssvm_tokenize};
+
 mod robdd;
 
 
 fn main() {
-    let input = r#"AG( (p -> (AF(q & (r | T)))) & (EG(F -> (AX(r)))) )"#;
-
-    let mut parser = ctl_parser::CtlParser::new(tokenizer4ctl::tokenize(input));
-    let ast = parser.parse();
-    println!("AST: {:?}", ast);
-
-    let ast = ast.norm_and_opt();
-    println!("normalized AST: {:?}", ast);
+let mut file = std::fs::File::open("../lab2/first.smv").unwrap();
+   let mut contents = String::new();
+   file.read_to_string(&mut contents).unwrap();
+   // print!("{}", contents);
+   let vec = ssvm_tokenize(&contents);
+   print!("{:?}",vec);
 
 }
