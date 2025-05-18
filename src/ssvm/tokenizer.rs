@@ -27,6 +27,8 @@ pub enum Token {
     LParen,
     RParen,
     In,
+    Int,
+    Bool,
 }
 
 fn skip_whitespace<I>(chars: &mut std::iter::Peekable<I>)
@@ -122,6 +124,8 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                         "case" => tokens.push(Token::Case),
                         "esae" => tokens.push(Token::Esae),
                         "in" => tokens.push(Token::In),
+                        "int" => tokens.push(Token::Int),
+                        "bool" => tokens.push(Token::Bool),
                         _ => tokens.push(Token::Id(ident)),
                     }
                 } else {

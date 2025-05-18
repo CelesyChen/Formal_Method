@@ -33,6 +33,12 @@ impl CtlParser {
         token
     }
     
+    fn expect(&mut self, expected: &Token) {
+        let token = self.next();
+        if token.as_ref() != Some(expected) {
+            panic!("Expected {:?}, but got {:?} at pos {:?}", expected, token, self.pos);
+        }
+    }
 
     pub fn parse (&mut self) -> AstNode {
         self.parse_i()
@@ -117,10 +123,5 @@ impl CtlParser {
         }
     }
 
-    fn expect(&mut self, expected: &Token) {
-        let token = self.next();
-        if token.as_ref() != Some(expected) {
-            panic!("Expected {:?}, but got {:?} at pos {:?}", expected, token, self.pos);
-        }
-    }
+    
 }

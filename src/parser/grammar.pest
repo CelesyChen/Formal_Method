@@ -1,0 +1,46 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+NEWLINE = _{ "\n" | "\r\n" }
+COMMENT = _{ "--" ~ (!NEWLINE ~ ANY)* }
+
+program = { SOI ~ (module_decl | spec_decl )* ~ EOI }
+
+module_decl = { "MODULE" ~ identifier ~ ("(" ~ param_list? ~ ")")? ~ module_body }
+
+spec_decl = _{ "CTLSPEC" ~ ctl_term ~ ";" }
+
+param_list = { identifier ~ ("," ~ identifier)* }
+
+module_body = { (var_decl | define_decl | assign_block | init_block | trans_block)* }
+
+ctl_term = { (!";")* }
+
+var_decl = _{ "VAR" ~ var_list* }
+define_decl = _{ "DEFINE" ~ define_list* }
+assign_block = _{ "ASSIGN" ~ assign_list* } // assign 现在不能处理init
+init_block = _{ "INIT" ~ init_list* }
+trans_block = _{ "TRANS" ~ trans_list* }
+
+var_list = { identifier ~ ":" ~ type_value ~ ";" }
+define_list = { identifier ~ ":=" ~ identifier ~ "in" ~ "{" ~ atom ~ ("," ~ atom)* ~ "}" ~ ";" } // 这里需要在语义分析时确认类型正确
+assign_list = { "next" ~ "(" ~ identifier ~ ")" ~ ":=" ~ (case_assign | single_assign) }
+init_block = { identifier ~ ":=" atom ~ ";" } // 所有init以 ;结尾
+trans_block = _{ case_trans | single_trans }
+
+type_value = {
+  "bool" ~ "=" ~ (TRUE | FALSE) 
+  | "int" ~ "=" ~ number
+  | "range" ~ "=" ~ number ~ ".." ~ number 
+  | "enum" ~ "=" ~ "{" ~ identifier ~ ("," ~ identifier)* ~ "}"
+}
+
+case_expr = {
+
+}
+
+atom = _{ TRUE | FALSE | identifier | number }
+
+TRUE = { ^"true" }
+FALSE = { ^"false" }
+
+identifier = @{ ASCII_ALPHA ~ ( ASCII_ALPHANUMERIC | "_")* }
+number = @{ ASCII_DIGIT+ }
