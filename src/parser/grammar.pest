@@ -35,7 +35,20 @@ Enum = { "enum" }
 case_assign = { ^"case" ~ case_item+ ~ ^"esac" }
 single_assign = { atom } // 这里需要在语义分析时确认类型正确
 
-case_item = { (identifier ~ "=" ~ atom | default) ~ ":" ~ atom_list ~ ";" }
+case_item = {  expr ~ ":" ~ atom_list ~ ";" }
+
+expr    = { or_expr ~ (And ~ or_expr)* }
+or_expr     = { eq_expr ~ (Or ~ eq_expr)* }
+eq_expr = { primary_expr ~ ((Eq | Neq) ~ primary_expr)* }
+primary_expr = {
+    "(" ~ expr ~ ")"
+  | atom
+}
+
+And = { "&" }
+Or = { "|" }
+Eq = { "==" }
+Neq = { "!=" }
 
 atom_list = { atom_set | atom }
 atom_set = _{ "{" ~ atom ~ ("," ~ atom)* ~ "}" }
@@ -47,7 +60,5 @@ FALSE = { ^"false" }
 
 identifier = @{ ASCII_ALPHA ~ ( ASCII_ALPHANUMERIC | "_")* }
 number = @{ ASCII_DIGIT+ }
-
-default = { "_" }
 
 ctl_term = { (!";" ~ ANY )* }

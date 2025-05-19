@@ -42,8 +42,7 @@ pub enum AssignExpr {
 
 #[derive(Debug, Clone)]
 pub struct CaseItem {
-    pub cond_var: Option<String>,
-    pub cond_value: Option<Atom>, // None: default
+    pub expr: Expr,
     pub result: Vec<Atom>,
 }
 
@@ -52,6 +51,15 @@ pub enum Atom {
     Bool(bool),
     Id(String),
     Num(u32),
+}
+
+#[derive(Debug, Clone)]
+pub enum Expr {
+    Or(Box<Expr>, Box<Expr>),
+    And(Box<Expr>, Box<Expr>),
+    Eq(Box<Expr>, Box<Expr>),
+    Ne(Box<Expr>, Box<Expr>),
+    Atom(Atom),
 }
 
 use pest;
@@ -171,38 +179,13 @@ fn build_type(pair: Pair<Rule>) -> SVMType {
 
 fn build_case_item(pair: Pair<Rule>) -> CaseItem {
     let mut inner = pair.into_inner();
-    let first = inner.next().unwrap();
-    match first.as_rule() {
-        Rule::default => {
-            let prob_atom = inner.next().unwrap();
-            let result_atoms = match prob_atom.as_rule() {
-                Rule::atom_list => prob_atom.into_inner().map(build_atom).collect(),
-                _ => unreachable!(),
-            };
-            CaseItem {
-                cond_var: None,
-                cond_value: None,
-                result: result_atoms,
-            }
-        },
-        Rule::identifier => {
-            let cond_var = first.as_str().to_string();
-            let cond_value = build_atom(inner.next().unwrap());
-            let prob_atoms = inner.next().unwrap();
-            let result_atoms = match prob_atoms.as_rule() {
-                Rule::atom_list => prob_atoms.into_inner().map(build_atom).collect(),
-                _ => unreachable!(),
-            };
-
-            CaseItem {
-                cond_var: Some(cond_var),
-                cond_value: Some(cond_value),
-                result: result_atoms,
-            }
-        },
-        _ => unreachable!(),
-    } 
-
+    let expr = build_expr(inner.next().unwrap());
+    let result = inner.next()
+        .unwrap()
+        .into_inner()
+        .map(build_atom)
+        .collect();
+    CaseItem{ expr, result }
 }
 
 fn build_atom(pair: Pair<Rule>) -> Atom {
@@ -213,5 +196,42 @@ fn build_atom(pair: Pair<Rule>) -> Atom {
         Rule::identifier => Atom::Id(t.as_str().to_string()),
         Rule::number => Atom::Num(t.as_str().parse().unwrap()),
         _ => unreachable!("{:?}", t.as_rule()),
+    }
+}
+
+fn build_expr(pair: Pair<Rule>) -> Expr {
+    match pair.as_rule() {
+        Rule::expr | Rule::or_expr | Rule::eq_expr => {
+            let mut inner = pair.into_inner();
+            let mut lhs = build_expr(inner.next().unwrap());
+
+            while let Some(op_pair) = inner.next() {
+                let rhs = build_expr(inner.next().unwrap());
+
+                lhs = match op_pair.as_rule() {
+                    Rule::Or => Expr::Or(Box::new(lhs), Box::new(rhs)),
+                    Rule::And => Expr::And(Box::new(lhs), Box::new(rhs)),
+                    Rule::Eq => Expr::Eq(Box::new(lhs), Box::new(rhs)),
+                    Rule::Neq => Expr::Ne(Box::new(lhs), Box::new(rhs)),
+                    other => unreachable!("Unknown operator: {:?}", other),
+                };
+            }
+
+            lhs
+        }
+
+        Rule::primary_expr => {
+            let mut inner = pair.into_inner();
+            let first = inner.next().unwrap();
+            match first.as_rule() {
+                Rule::expr => build_expr(first), // 括号表达式
+                Rule::atom => Expr::Atom(build_atom(first)),
+                _ => unreachable!("Unexpected rule in primary_expr: {:?}", first.as_rule()),
+            }
+        }
+
+        Rule::atom => Expr::Atom(build_atom(pair)),
+
+        _ => unreachable!("Unexpected rule in build_expr: {:?}", pair.as_rule()),
     }
 }

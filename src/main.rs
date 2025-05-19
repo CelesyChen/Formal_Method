@@ -19,7 +19,7 @@ fn print_pairs(pairs: pest::iterators::Pairs<Rule>, depth: usize) {
 }
 
 fn main() {
-  let unparse_file = fs::read_to_string("../lab2/first.smv")
+  let unparse_file = fs::read_to_string("tests/test.smv")
     .expect("cannot open file");
   let pairs = SSVMParser::parse(Rule::program, &unparse_file).expect("parse failed");
 
@@ -27,5 +27,5 @@ fn main() {
 
   let ast = build_ast(pairs.peek().unwrap());
 
-  print!("{:?}", ast);
+  print!("{:#?}", ast);
 }
