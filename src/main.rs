@@ -1,5 +1,7 @@
 mod parser;
 use std::fs;
+mod ctl;
+use ctl::{parse_ast};
 
 use crate::parser::ssvmparser::*; // 替换为你的 pest 模块名
 
@@ -26,6 +28,6 @@ fn main() {
   // print_pairs(pairs, 0);
 
   let ast = build_ast(pairs.peek().unwrap());
-
-  print!("{:#?}", ast);
+  
+  // print!("{:#?}", ast);
 }

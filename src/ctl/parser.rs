@@ -1,3 +1,5 @@
+use core::panic;
+
 use crate::ctl::tokenizer::*;
 use crate::ctl::ast::*;
 
@@ -116,12 +118,28 @@ impl CtlParser {
             Some(Token::False) => { self.next(); AstNode::False }
             Some(Token::Identifier(name)) => { 
                 let name = name.clone();
-                self.next(); 
-                AstNode::Id(name) 
+                self.next(); self.next();
+                let atom = self.parse_atom();
+                AstNode::Expr(name, atom)
             }
             _ => panic!("Unexpected token in primary expression: {:?}", self.peek())
         }
     }
 
+    fn parse_atom(&mut self) -> Atom {
+        match self.peek() {
+            Some(Token::Identifier(name)) => {
+                let name = name.clone();
+                self.next();
+                Atom::Id(name)
+            },
+            Some(Token::Num(num)) => {
+                let num = num.clone();
+                self.next();
+                Atom::Num(num)
+            },
+            _ => panic!("Unexpected token in atom: {:?}", self.peek())
+        }
+    }
     
 }

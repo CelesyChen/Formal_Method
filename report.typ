@@ -17,27 +17,6 @@
 
 #figure(image("fig/start.svg"), caption: "程序架构图")
 
-== ssmv的文法
-
-我曾尝试完整的表达出来这个文法，但是规范地表达太过麻烦，我们不妨直接看pest文件，并且在上面解释：
-
-```text
-
-```
-
-== CTL的文法
-
-我们按照下面的产生式来定义CTL的文法，不难发现它是一个LL(1)文法，这将有利于我们解析它。
-
-#par("")
-
-#grid(columns: (1fr, 1fr))[$S &-> I \ I &-> O -> I \ I &-> O \
-O &-> A | O \ O &-> A \ A &-> N \& A \ A &-> N \
-N &-> ! N \ N &-> P \ P &-> "AG"(S) \ P &-> "AF"(S)
-\ P &-> "AX"(S)$][$P &-> "EG"(S) \ P &-> "EF"(S) \ P &-> "EX"(S) \ P &-> A[ S "U" S ] \ P &-> E[ S "U" S] \
-P &-> (S) \ P &-> T \ P &-> F \ P &-> id$]
-
-
 == Rust & pest
 
 我们将会使用Rust来编写这个程序，尽管已经存在flex和bison这类能高效完成(并且也在编译原理课程上使用过的)lexer/parser工作的工具，这是因为如下考量：
@@ -50,7 +29,113 @@ P &-> (S) \ P &-> T \ P &-> F \ P &-> id$]
 
 具体的pest语法可以见#link(<pest>)[上面]，总得来说我们可以写出下面的语法文件：
 
-== ROBDD 
+== ssmv的文法
 
+我曾尝试完整且规范地表达出来这个文法，但太过麻烦，所以我们不妨直接看pest文件，并且在上面解释：
+
+```text
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+NEWLINE = _{ "\n" | "\r\n" }
+COMMENT = _{ "--" ~ (!NEWLINE ~ ANY)* }
+
+program = { SOI ~ (module_decl)* ~ EOI }
+
+module_decl = { "MODULE" ~ identifier ~ module_body }
+
+module_body = { (var_decl | define_decl | assign_block | init_block | spec_decl)* }
+
+var_decl = _{ "VAR" ~ var_list+ }
+define_decl = _{ "DEFINE" ~ define_list+ }
+assign_block = _{ "ASSIGN" ~ assign_list+ } // assign 现在不能处理init
+init_block = _{ "INIT" ~ init_list+ } 
+spec_decl = _{ spec_list+ }
+
+// 我们舍弃了TRANS，现在只能在assign里定义转移，这能提高语义的正交性
+
+var_list = { identifier ~ ":" ~ type ~ ";" }
+define_list = { identifier ~ ":=" ~ identifier ~ "in" ~ atom_list ~ ";" } // 这里需要在语义分析时确认类型正确
+assign_list = { identifier ~ ":=" ~ (case_assign | single_assign) ~ ";" } 
+init_list = { identifier ~ ":=" ~ atom ~ ";" } // 所有init以 ; 结尾
+spec_list = { "CTLSPEC" ~ ctl_term ~ ";" }
+
+type = { // 现在需要更明确地定义变量
+  Bool
+  | Int ~ "[" ~ number ~ ".." ~ number ~ "]"
+  | Enum ~ "{" ~ identifier ~ ("," ~ identifier)* ~ "}"
+}
+
+Bool = { "bool" }
+Int = { "int" }
+Enum = { "enum" }
+
+case_assign = { ^"case" ~ case_item+ ~ ^"esac" }
+single_assign = { atom } 
+
+case_item = {  expr ~ ":" ~ atom_list ~ ";" } // 为了降低复杂度，我们只支持 & | == !=和()组成的式子
+
+expr    = { or_expr ~ (And ~ or_expr)* }
+or_expr     = { eq_expr ~ (Or ~ eq_expr)* }
+eq_expr = { primary_expr ~ ((Eq | Neq) ~ primary_expr)* }
+primary_expr = {
+    "(" ~ expr ~ ")"
+  | atom
+}
+
+And = { "&" }
+Or = { "|" }
+Eq = { "==" }
+Neq = { "!=" }
+
+atom_list = { atom_set | atom }
+atom_set = _{ "{" ~ atom ~ ("," ~ atom)* ~ "}" }
+
+atom = { TRUE | FALSE | identifier | number }
+
+TRUE = { ^"true" }
+FALSE = { ^"false" }
+
+identifier = @{ ASCII_ALPHA ~ ( ASCII_ALPHANUMERIC | "_")* }
+number = @{ ASCII_DIGIT+ }
+
+ctl_term = { (!";" ~ ANY )* } // 可以看到ctl会被单独处理，并且我们不支持LTL
+```
+
+== CTL的文法
+
+我们按照下面的产生式来定义CTL的文法，不难发现它是一个LL(1)文法，这将有利于我们解析它。
+
+#par("")
+
+#grid(columns: (1fr, 1fr))[$S &-> I \ I &-> O -> I \ I &-> O \
+O &-> A | O \ O &-> A \ A &-> N \& A \ A &-> N \
+N &-> ! N \ N &-> P \ P &-> "AG"(S) \ P &-> "AF"(S)
+\ P &-> "AX"(S)$][$P &-> "EG"(S) \ P &-> "EF"(S) \ P &-> "EX"(S) \ P &-> A[ S "U" S ] \ P &-> E[ S "U" S] \
+P &-> (S) \ P &-> T \ P &-> F \ P &-> id = "atom" \ "atom"&-> id \ "atom"&-> "num" $]
+
+== 状态转移图
+
+我们根据解析得到的ssmv文法，可以以下面的算法绘制状态转移图。
+
+#[
+#import "@preview/algo:0.3.6": algo, i, d, comment, code
+
+#algo(
+  title: "FSM_build",
+  parameters: ("AST",)
+)[
+  对所有AST里的VarDecl，构造
+]
+
+]
+
+== ROBDD-CTL
+
+ROBDD在Slides5.2.1-2中有详细的描述，我们这里只简单的说明。
+
+ROBDD是一种以bool值为函数的压缩表示方法，它具有以下特点：
+- Ordered
+- Reduced
+
+通俗地说，它能将某些布尔值组成的函数极大压缩地表示，并且我们一般递归地生成它，下面是一个rust的代码段，它是本次实验中生成ROBDD图的方式
 
 = Simple SMV死锁证明

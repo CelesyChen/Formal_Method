@@ -14,9 +14,15 @@ pub enum AstNode {
     EF(Box<AstNode>),
     AU(Box<AstNode>, Box<AstNode>),
     EU(Box<AstNode>, Box<AstNode>),
-    Id(String),
+    Expr(String, Atom),
     True,
     False,
+}
+
+#[derive(Debug, Clone)]
+pub enum Atom {
+    Id(String),
+    Num(u32)
 }
 
 impl AstNode {
@@ -93,7 +99,7 @@ impl AstNode {
             AstNode::EU(lhs, rhs) => {
                 AstNode::EU(Box::new(lhs.normalize()), Box::new(rhs.normalize()))
             }
-            AstNode::Id(_) | AstNode::True | AstNode::False => {
+            AstNode::Expr(..) | AstNode::True | AstNode::False => {
                 self // 基础元素，直接返回
             }
         }
@@ -145,7 +151,7 @@ impl AstNode {
                 AstNode::EU(Box::new(left.optimize()), Box::new(right.optimize()))
             }
 
-            AstNode::Id(_) | AstNode::True | AstNode::False => self,
+            AstNode::Expr(..) | AstNode::True | AstNode::False => self,
             AstNode::AF(_) | AstNode::AG(_) | AstNode::AX(_) | AstNode::AU(_, _) | AstNode::EF(_) => {
                 panic!("Normalization failed, {:?} is not deleted.", self);
             }

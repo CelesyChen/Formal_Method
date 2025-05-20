@@ -18,6 +18,8 @@ pub enum Token {
     LBracket,
     RBracket,
     Identifier(String),
+    Eq,
+    Num(u32),
     True,
     False,
 }
@@ -51,6 +53,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             '!' => { tokens.push(Token::Not); chars.next(); },
             'T' => { tokens.push(Token::True); chars.next(); },
             'F' => { tokens.push(Token::False); chars.next(); },
+            '=' => { tokens.push(Token::Eq); chars.next(); }
             '-' => { 
                 chars.next();
                 if chars.peek() == Some(&'>') {
@@ -61,10 +64,10 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 }
             },
             _ => {
-                if c.is_alphabetic() {
+                if c.is_ascii_alphanumeric() || c == '_' {
                     let mut ident = String::new();
                     while let Some(&ch) = chars.peek() {
-                        if ch.is_alphanumeric() {
+                        if ch.is_alphanumeric() || ch == '_' {
                             ident.push(ch);
                             chars.next();
                         } else {
@@ -72,6 +75,10 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                         }
                     }
 
+                    if let Ok(num) = ident.parse::<u32>() {
+                        tokens.push(Token::Num(num));
+                        continue;
+                    }
                     match ident.as_str() {
                         "AG" => tokens.push(Token::AG),
                         "EG" => tokens.push(Token::EG),
