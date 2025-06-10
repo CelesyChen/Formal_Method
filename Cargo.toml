@@ -6,7 +6,12 @@ edition = "2024"
 [dependencies]
 pest = "2.8" 
 pest_derive = "2.8"
+graphlib = "0.6.3"
 
 [[bin]]
-name = "robdd"
+name = "ssmv"
 path = "src/main.rs"
+
+[[bin]]
+name = "deadlock"
+path = "src/deadlock/main.rs"
