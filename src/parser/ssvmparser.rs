@@ -22,9 +22,6 @@ pub enum AstNode {
     Assign(String, AssignExpr),              // next(x) := ...
     Init(String, Atom),
     Spec(String),
-    CaseAssign(Vec<CaseItem>),
-    SingleAssign(Atom),
-    Atom(Atom),
 }
 
 #[derive(Debug, Clone)]

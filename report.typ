@@ -123,7 +123,8 @@ P &-> (S) \ P &-> T \ P &-> F \ P &-> id = "atom" \ "atom"&-> id \ "atom"&-> "nu
   title: "FSM_build",
   parameters: ("AST",)
 )[
-  对所有AST里的VarDecl，构造
+  对所有AST里的VarDecl，构造符号表并检查表达式是否合法 #i \
+  
 ]
 
 ]
@@ -139,3 +140,6 @@ ROBDD是一种以bool值为函数的压缩表示方法，它具有以下特点�
 通俗地说，它能将某些布尔值组成的函数极大压缩地表示，并且我们一般递归地生成它，下面是一个rust的代码段，它是本次实验中生成ROBDD图的方式
 
 = Simple SMV死锁证明
+
+
+== Acknowledgements

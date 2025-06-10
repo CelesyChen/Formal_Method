@@ -2,8 +2,9 @@ mod parser;
 use std::fs;
 mod ctl;
 use ctl::{parse_ast};
+mod table;
 
-use crate::parser::ssvmparser::*; // 替换为你的 pest 模块名
+use crate::parser::ssvmparser::*;
 
 use pest::Parser;
 
@@ -20,6 +21,26 @@ fn print_pairs(pairs: pest::iterators::Pairs<Rule>, depth: usize) {
     }
 }
 
+fn collect_spec_values(ast: &AstNode, specs: &mut Vec<String>) {
+  match ast {
+    AstNode::Program(nodes) => {
+      for node in nodes {
+        collect_spec_values(node, specs);
+      }
+    }
+    AstNode::ModuleDecl { name: _, body } => {
+      for node in body {
+        collect_spec_values(node, specs);
+      }
+    }
+    AstNode::Spec(spec_str) => {
+      specs.push(spec_str.clone());
+    }
+    _ => {} 
+  }
+}
+
+
 fn main() {
   let unparse_file = fs::read_to_string("tests/test.smv")
     .expect("cannot open file");
@@ -28,6 +49,12 @@ fn main() {
   // print_pairs(pairs, 0);
 
   let ast = build_ast(pairs.peek().unwrap());
+
+  // println!("{:#?}", &ast);
+
+  let a = table::to_symbol_table(&ast);
+  for item in a {
+    println!("{:#?}",item);
+  }
   
-  // print!("{:#?}", ast);
 }

@@ -42,54 +42,54 @@ impl CtlParser {
         }
     }
 
-    pub fn parse (&mut self) -> AstNode {
+    pub fn parse (&mut self) -> CtlAst {
         self.parse_i()
     }
 
-    fn parse_i (&mut self) -> AstNode {
+    fn parse_i (&mut self) -> CtlAst {
         let mut node = self.parse_o();
         if self.match_token(Token::Implies) {
             let right = self.parse_i();
-            node = AstNode::Implies(Box::new(node), Box::new(right));
+            node = CtlAst::Implies(Box::new(node), Box::new(right));
         }
         node
     }
 
-    fn parse_o(&mut self) -> AstNode {
+    fn parse_o(&mut self) -> CtlAst {
         let mut node = self.parse_a();
         while self.match_token(Token::Or) {
             let right = self.parse_o();
-            node = AstNode::Or(Box::new(node), Box::new(right));
+            node = CtlAst::Or(Box::new(node), Box::new(right));
         }
         node
     }
 
-    fn parse_a (&mut self) -> AstNode {
+    fn parse_a (&mut self) -> CtlAst {
         let mut node = self.parse_n();
         while self.match_token(Token::And) {
             let right = self.parse_a();
-            node = AstNode::And(Box::new(node), Box::new(right));
+            node = CtlAst::And(Box::new(node), Box::new(right));
         }
         node   
     }
 
-    fn parse_n (&mut self) -> AstNode {
+    fn parse_n (&mut self) -> CtlAst {
         if self.match_token(Token::Not) {
             let expr = self.parse_n();
-            AstNode::Not(Box::new(expr))
+            CtlAst::Not(Box::new(expr))
         } else {
             self.parse_p()
         }
     }
 
-    fn parse_p(&mut self) -> AstNode {
+    fn parse_p(&mut self) -> CtlAst {
         match self.peek() {
-            Some(Token::AG) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::AG(Box::new(s)) }
-            Some(Token::EG) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::EG(Box::new(s)) }
-            Some(Token::AX) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::AX(Box::new(s)) }
-            Some(Token::EX) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::EX(Box::new(s)) }
-            Some(Token::AF) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::AF(Box::new(s)) }
-            Some(Token::EF) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); AstNode::EF(Box::new(s)) }
+            Some(Token::AG) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::AG(Box::new(s)) }
+            Some(Token::EG) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::EG(Box::new(s)) }
+            Some(Token::AX) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::AX(Box::new(s)) }
+            Some(Token::EX) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::EX(Box::new(s)) }
+            Some(Token::AF) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::AF(Box::new(s)) }
+            Some(Token::EF) => { self.next(); self.expect(&Token::LParen); let s = self.parse(); self.expect(&Token::RParen); CtlAst::EF(Box::new(s)) }
             Some(Token::AU) => {
                 self.next(); // A[
                 self.next();
@@ -97,7 +97,7 @@ impl CtlParser {
                 self.expect(&Token::Until);
                 let right = self.parse();
                 self.expect(&Token::RBracket);
-                AstNode::AU(Box::new(left), Box::new(right))
+                CtlAst::AU(Box::new(left), Box::new(right))
             },
             Some(Token::EU) => {
                 self.next(); // E[
@@ -106,7 +106,7 @@ impl CtlParser {
                 self.expect(&Token::Until);
                 let right = self.parse();
                 self.expect(&Token::RBracket);
-                AstNode::EU(Box::new(left), Box::new(right))
+                CtlAst::EU(Box::new(left), Box::new(right))
             },
             Some(Token::LParen) => {
                 self.next();
@@ -114,13 +114,13 @@ impl CtlParser {
                 self.expect(&Token::RParen);
                 s
             }
-            Some(Token::True) => { self.next(); AstNode::True }
-            Some(Token::False) => { self.next(); AstNode::False }
+            Some(Token::True) => { self.next(); CtlAst::True }
+            Some(Token::False) => { self.next(); CtlAst::False }
             Some(Token::Identifier(name)) => { 
                 let name = name.clone();
                 self.next(); self.next();
                 let atom = self.parse_atom();
-                AstNode::Expr(name, atom)
+                CtlAst::Expr(name, atom)
             }
             _ => panic!("Unexpected token in primary expression: {:?}", self.peek())
         }
