@@ -156,8 +156,6 @@ void Graph::INIT() {
 }
 
 void Graph::WRITE() {
-
-  // TODO: 先重构数据结构，再输出，这样会省很多事
   unordered_map<int, set<pair<pii, bool>>> dst_paths;
     
   for (const auto& path_entry : path) {
