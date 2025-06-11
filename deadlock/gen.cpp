@@ -18,6 +18,7 @@ public:
   int v; // 0..v-1
   vector<vector<int>> channels;
   vector<int> hosts;
+  // 前面： 序号 后面： 编号
   unordered_map<pii, vector<pii>> path;
   
 
@@ -66,6 +67,16 @@ int main (int argc, char** argv) {
 
   graph.ssmv = ssmv;
   graph.find_path();
+
+  // for (auto i = 0; i <  graph.hosts.size(); ++i) {
+  //   for (auto j = 0; j <  graph.hosts.size(); ++j) {
+  //     if (i == j) continue;
+  //     printf("%d -> %d :\n", graph.hosts[i], graph.hosts[j]);
+  //     for (auto [from, to] : graph.path[{i, j}]) {
+  //       printf("  %d %d\n", from, to);
+  //     }
+  //   } 
+  // }
 
   cout << "MODULE main\n";
   graph.WRITE();
@@ -161,27 +172,29 @@ void Graph::WRITE() {
   for (const auto& path_entry : path) {
     const auto& src_dst = path_entry.first;
     const auto& edges = path_entry.second;
-    int src = src_dst.first;
-    int dst = src_dst.second;
+    int i = src_dst.first;
+    int j = src_dst.second;
+    int src = hosts[i];
+    int dst = hosts[j];
     
     for (const pii& edge : edges) {
       bool issue = (edge.first == src);
       
-      if ( issue && dst_paths[dst].find({edge, false}) != dst_paths[dst].end() ) {
-        dst_paths[dst].erase({edge, 0});
-        dst_paths[dst].emplace(edge, 1);
-      } else if ( issue && dst_paths[dst].find({edge, false}) == dst_paths[dst].end() ) {
-        dst_paths[dst].emplace(edge, 1);
-      } else if ( not issue && dst_paths[dst].find({edge, true}) == dst_paths[dst].end() ) {
-        dst_paths[dst].emplace(edge, 0);
+      if ( issue && dst_paths[j].find({edge, false}) != dst_paths[j].end() ) {
+        dst_paths[j].erase({edge, 0});
+        dst_paths[j].emplace(edge, 1);
+      } else if ( issue && dst_paths[j].find({edge, false}) == dst_paths[j].end() ) {
+        dst_paths[j].emplace(edge, 1);
+      } else if ( not issue && dst_paths[j].find({edge, true}) == dst_paths[j].end() ) {
+        dst_paths[j].emplace(edge, 0);
       }
     }
   }
 
   // for (int i = 0; i < hosts.size(); ++i) {
-  //   cout << i << "\n";
+  //   cout << hosts[i] + 1 << "\n";
   //   for (const auto& [edge, issue] : dst_paths[i]) {
-  //     printf("%d %d : %d \n", edge.first, edge.second, issue);
+  //     printf("%d %d : %d \n", edge.first + 1, edge.second + 1, issue);
   //   }
   // }
 
@@ -189,23 +202,24 @@ void Graph::WRITE() {
   std::unordered_map<string, vector<tisi>> assign_cases;
 
   int signal = 0;
-  for (auto dst : hosts) {
-    for (auto& [edge, issue] : dst_paths[dst]) {
+  for (auto i = 0; i < hosts.size(); ++i) {
+    auto dst = hosts[i];
+    for (auto& [edge, issue] : dst_paths[i]) {
       string ch = "ch" + to_string(edge.first + 1) + "_" + to_string(edge.second + 1);
       if (issue) {
         string rule = ch + " = 0";
-        assign_cases[ch].push_back({signal, rule, dst + 1 });
+        assign_cases[ch].push_back({signal, rule, i + 1 });
         ++signal;
       } 
 
       {
-        string rule = ch + " = " + to_string(dst + 1);
-        for (auto& [ e, _] : dst_paths[dst] ) {
+        string rule = ch + " = " + to_string(i + 1);
+        for (auto& [ e, _] : dst_paths[i] ) {
           if (edge.second == e.first) {
             string next_ch = "ch" + to_string(e.first + 1) + "_" + to_string(e.second + 1);
             string temp_rule = rule + " & " + next_ch + " = 0";
             assign_cases[ch].push_back({signal, temp_rule, 0 });
-            assign_cases[next_ch].push_back({signal, temp_rule, dst + 1 });
+            assign_cases[next_ch].push_back({signal, temp_rule, i + 1 });
             ++signal;
             break;
           }
@@ -213,7 +227,7 @@ void Graph::WRITE() {
       }
 
       if (edge.second == dst) {
-        string rule = ch + " = " + to_string(dst + 1);
+        string rule = ch + " = " + to_string(i + 1);
         assign_cases[ch].push_back({signal, rule, 0});
         ++signal;
       }
