@@ -18,19 +18,15 @@ public:
   int v; // 0..v-1
   vector<vector<int>> channels;
   vector<int> hosts;
-
   unordered_map<pii, vector<pii>> path;
-
-  Graph() : v(0) {
-      // 对于 vector 和 unordered_map，默认构造函数会自动将它们初始化为空
-      // 所以这里不需要额外的代码去清空它们
-  }
+  
 
   void find_path();
   void VAR();
   void INIT();
-  void ASSIGN();
-  void SPEC();
+  void WRITE();
+private:
+  int signal_cnt;
 };
 
 
@@ -41,40 +37,38 @@ int main (int argc, char** argv) {
 
   // parse
   for (int i = 1; i < argc; ++i) {
-    if (strcmp(argv[i], "-i") ) {
+    if (strcmp(argv[i], "-i") == 0 ) {
       freopen(argv[++i], "r", stdin);
-    } else if (strcmp(argv[i], "-o")) {
+    } else if (strcmp(argv[i], "-o") == 0) {
       freopen(argv[++i], "w", stdout);
-    } else if (strcmp(argv[i], "-ssmv")) {
+    } else if (strcmp(argv[i], "-ssmv") == 0) {
       ssmv = 1;
     }
   }
 
   auto graph = Graph();
-  int e, h;
+  int e = 0, h = 0;
 
-  cin >> graph.v >> e >> h;
+  scanf("%d %d %d\n", &graph.v, &e, &h);
   graph.hosts.resize(h);
   graph.channels.resize(graph.v);
 
   int a, b;
   for (auto i = 0; i < e; ++i) {
-    cin >> a >> b;
-    graph.channels[a].push_back(b);
+    scanf("%d %d\n", &a, &b);
+    graph.channels[a-1].push_back(b-1);
   }
 
   for (auto i = 0; i < h; ++i) {
-    cin >> graph.hosts[i];
+    scanf("%d", &graph.hosts[i]);
+    --graph.hosts[i];
   }
 
   graph.ssmv = ssmv;
   graph.find_path();
 
   cout << "MODULE main\n";
-  graph.VAR();
-  graph.INIT();
-  graph.ASSIGN();
-  graph.SPEC();
+  graph.WRITE();
 
   return 0;
 }
@@ -117,8 +111,8 @@ void Graph::find_path() {
           edges.emplace_back(pred, current);
           current = pred;
         }
-        std::reverse(edges.begin(), edges.end());  // 反转得到正序路径
-        path[{src, dst}] = edges; 
+        std::reverse(edges.begin(), edges.end());
+        path[{i, j}] = std::move(edges);
       }
       
     }
@@ -126,36 +120,149 @@ void Graph::find_path() {
 }
 void Graph::VAR() {
 
-  cout << "\tVAR";
+  cout << "  VAR\n";
   for (auto i = 0; i < v; ++i) {
     for (auto to : channels[i]) {
       if (ssmv) {
   
       } else {
-        printf("\t\tch%d_%d: 0..%d\n", i, to, (int)hosts.size());  
+        printf("    ch%d_%d: 0..%d;\n", i + 1, to + 1, (int)hosts.size());  
       }
     }
-  }
-  int cnt = 0;
-  for (auto src = 0; src < hosts.size(); ++src ) {
-    for (auto dst = 0; dst < hosts.size(); ++dst ) {
-
-    } 
   }
   if (ssmv) {
     
   } else {
 
-    printf("\t\tsignal: 0..%d\n", cnt);  
+    printf("    signal: 0..%d;\n", signal_cnt);  
   }
 
 }
 void Graph::INIT() {
-
+  cout << "  INIT\n";
+  for (int i = 0; i < v; ++i) {
+    for (int j = 0; j < channels[i].size(); ++j) {
+      int to = channels[i][j];
+      if (!ssmv) {
+        printf("    ch%d_%d = 0", i + 1, to + 1);
+        if (i == v - 1 && j == channels[i].size() - 1) {
+          printf(";\n");
+        } else {
+          printf(" &\n");
+        }
+      }
+    }
+  }
 }
-void Graph::ASSIGN() {
 
-}
-void Graph::SPEC() {
+void Graph::WRITE() {
+
+  // TODO: 先重构数据结构，再输出，这样会省很多事
+  unordered_map<int, set<pair<pii, bool>>> dst_paths;
+    
+  for (const auto& path_entry : path) {
+    const auto& src_dst = path_entry.first;
+    const auto& edges = path_entry.second;
+    int src = src_dst.first;
+    int dst = src_dst.second;
+    
+    for (const pii& edge : edges) {
+      bool issue = (edge.first == src);
+      
+      if ( issue && dst_paths[dst].find({edge, false}) != dst_paths[dst].end() ) {
+        dst_paths[dst].erase({edge, 0});
+        dst_paths[dst].emplace(edge, 1);
+      } else if ( issue && dst_paths[dst].find({edge, false}) == dst_paths[dst].end() ) {
+        dst_paths[dst].emplace(edge, 1);
+      } else if ( not issue && dst_paths[dst].find({edge, true}) == dst_paths[dst].end() ) {
+        dst_paths[dst].emplace(edge, 0);
+      }
+    }
+  }
+
+  // for (int i = 0; i < hosts.size(); ++i) {
+  //   cout << i << "\n";
+  //   for (const auto& [edge, issue] : dst_paths[i]) {
+  //     printf("%d %d : %d \n", edge.first, edge.second, issue);
+  //   }
+  // }
+
+  using tisi = tuple<int, string, int>;
+  std::unordered_map<string, vector<tisi>> assign_cases;
+
+  int signal = 0;
+  for (auto dst : hosts) {
+    for (auto& [edge, issue] : dst_paths[dst]) {
+      string ch = "ch" + to_string(edge.first + 1) + "_" + to_string(edge.second + 1);
+      if (issue) {
+        string rule = ch + " = 0";
+        assign_cases[ch].push_back({signal, rule, dst + 1 });
+        ++signal;
+      } 
+
+      {
+        string rule = ch + " = " + to_string(dst + 1);
+        for (auto& [ e, _] : dst_paths[dst] ) {
+          if (edge.second == e.first) {
+            string next_ch = "ch" + to_string(e.first + 1) + "_" + to_string(e.second + 1);
+            string temp_rule = rule + " & " + next_ch + " = 0";
+            assign_cases[ch].push_back({signal, temp_rule, 0 });
+            assign_cases[next_ch].push_back({signal, temp_rule, dst + 1 });
+            ++signal;
+            break;
+          }
+        }
+      }
+
+      if (edge.second == dst) {
+        string rule = ch + " = " + to_string(dst + 1);
+        assign_cases[ch].push_back({signal, rule, 0});
+        ++signal;
+      }
+    }
+  }
+  signal_cnt = signal - 1;
+  VAR();
+  INIT();
+  cout << "  ASSIGN\n";
+
+  if (!ssmv) {
+    printf("    init(signal) := 0..%d;\n", signal_cnt);
+    printf("    next(signal) := 0..%d;\n\n", signal_cnt);
+    for (auto& [ch, cases] : assign_cases) {
+      printf("    next(%s) := \n", ch.c_str());
+      printf("      case\n");
+      for (auto& [ fire, rule, target] : cases) {
+        printf("        signal = %d & %s : %d;\n", fire, rule.c_str(), target);
+      }
+      printf("        TRUE : %s;\n", ch.c_str());
+      printf("      esac;\n\n");
+    }
+  }
+
+
+  // SPEC
+  if (!ssmv) {
+    cout << "  CTLSPEC !EF!(";
+    bool start = 1;
+    set<string> ss;
+    for (auto& [ch, cases] : assign_cases) {
+      for (auto& [ _, rule, _] : cases) {
+        if (ss.find(rule) != ss.end()) continue;
+
+        if (start) {
+          printf(" \n");
+          start = 0;
+        } else {
+          printf(" | \n");
+        }
+        
+        printf("    ( %s )", rule.c_str());
+        ss.emplace(rule);
+        
+      }
+    }
+    cout << "\n  )\n";
+  }
 
 }
