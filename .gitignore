@@ -2,3 +2,5 @@
 Cargo.lock
 /fig/*.svg
 /tests
+/fig
+report.typ
