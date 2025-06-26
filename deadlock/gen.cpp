@@ -21,7 +21,6 @@ public:
   // 前面： 序号 后面： 编号
   unordered_map<pii, vector<pii>> path;
   
-
   void find_path();
   void VAR();
   void INIT();
@@ -67,16 +66,6 @@ int main (int argc, char** argv) {
 
   graph.ssmv = ssmv;
   graph.find_path();
-
-  // for (auto i = 0; i <  graph.hosts.size(); ++i) {
-  //   for (auto j = 0; j <  graph.hosts.size(); ++j) {
-  //     if (i == j) continue;
-  //     printf("%d -> %d :\n", graph.hosts[i], graph.hosts[j]);
-  //     for (auto [from, to] : graph.path[{i, j}]) {
-  //       printf("  %d %d\n", from, to);
-  //     }
-  //   } 
-  // }
 
   cout << "MODULE main\n";
   graph.WRITE();
@@ -135,16 +124,15 @@ void Graph::VAR() {
   for (auto i = 0; i < v; ++i) {
     for (auto to : channels[i]) {
       if (ssmv) {
-  
+        printf("    ch%d_%d: int[0..%d];\n", i + 1, to + 1, (int)hosts.size());
       } else {
         printf("    ch%d_%d: 0..%d;\n", i + 1, to + 1, (int)hosts.size());  
       }
     }
   }
   if (ssmv) {
-    
+    printf("    signal: int[0..%d];\n", signal_cnt);
   } else {
-
     printf("    signal: 0..%d;\n", signal_cnt);  
   }
 
@@ -255,7 +243,7 @@ void Graph::WRITE() {
 
   // SPEC
   if (!ssmv) {
-    cout << "  CTLSPEC !EF!(";
+    cout << "  INVARSPEC (";
     bool start = 1;
     set<string> ss;
     for (auto& [ch, cases] : assign_cases) {

@@ -1,0 +1,610 @@
+MODULE main
+  VAR
+    ch1_2: 0..9;
+    ch2_3: 0..9;
+    ch3_4: 0..9;
+    ch3_17: 0..9;
+    ch4_5: 0..9;
+    ch4_6: 0..9;
+    ch5_6: 0..9;
+    ch6_7: 0..9;
+    ch7_8: 0..9;
+    ch7_17: 0..9;
+    ch8_9: 0..9;
+    ch8_10: 0..9;
+    ch9_10: 0..9;
+    ch10_11: 0..9;
+    ch11_12: 0..9;
+    ch11_17: 0..9;
+    ch12_13: 0..9;
+    ch13_14: 0..9;
+    ch14_15: 0..9;
+    ch15_16: 0..9;
+    ch15_17: 0..9;
+    ch16_1: 0..9;
+    ch16_2: 0..9;
+    ch17_3: 0..9;
+    ch17_7: 0..9;
+    ch17_11: 0..9;
+    ch17_15: 0..9;
+    signal: 0..187;
+  INIT
+    ch1_2 = 0 &
+    ch2_3 = 0 &
+    ch3_4 = 0 &
+    ch3_17 = 0 &
+    ch4_5 = 0 &
+    ch4_6 = 0 &
+    ch5_6 = 0 &
+    ch6_7 = 0 &
+    ch7_8 = 0 &
+    ch7_17 = 0 &
+    ch8_9 = 0 &
+    ch8_10 = 0 &
+    ch9_10 = 0 &
+    ch10_11 = 0 &
+    ch11_12 = 0 &
+    ch11_17 = 0 &
+    ch12_13 = 0 &
+    ch13_14 = 0 &
+    ch14_15 = 0 &
+    ch15_16 = 0 &
+    ch15_17 = 0 &
+    ch16_1 = 0 &
+    ch16_2 = 0 &
+    ch17_3 = 0 &
+    ch17_7 = 0 &
+    ch17_11 = 0 &
+    ch17_15 = 0;
+  ASSIGN
+    init(signal) := 0..187;
+    next(signal) := 0..187;
+
+    next(ch11_12) := 
+      case
+        signal = 137 & ch10_11 = 7 & ch11_12 = 0 : 7;
+        signal = 138 & ch11_12 = 0 : 7;
+        signal = 139 & ch11_12 = 7 & ch12_13 = 0 : 0;
+        signal = 145 & ch17_11 = 7 & ch11_12 = 0 : 7;
+        TRUE : ch11_12;
+      esac;
+
+    next(ch17_11) := 
+      case
+        signal = 108 & ch3_17 = 6 & ch17_11 = 0 : 6;
+        signal = 113 & ch7_17 = 6 & ch17_11 = 0 : 6;
+        signal = 121 & ch15_17 = 6 & ch17_11 = 0 : 6;
+        signal = 124 & ch17_11 = 6 : 0;
+        signal = 129 & ch3_17 = 7 & ch17_11 = 0 : 7;
+        signal = 134 & ch7_17 = 7 & ch17_11 = 0 : 7;
+        signal = 142 & ch15_17 = 7 & ch17_11 = 0 : 7;
+        signal = 145 & ch17_11 = 7 & ch11_12 = 0 : 0;
+        TRUE : ch17_11;
+      esac;
+
+    next(ch7_8) := 
+      case
+        signal = 90 & ch6_7 = 5 & ch7_8 = 0 : 5;
+        signal = 91 & ch7_8 = 0 : 5;
+        signal = 92 & ch7_8 = 5 & ch8_9 = 0 : 0;
+        signal = 103 & ch17_7 = 5 & ch7_8 = 0 : 5;
+        TRUE : ch7_8;
+      esac;
+
+    next(ch4_5) := 
+      case
+        signal = 45 & ch3_4 = 3 & ch4_5 = 0 : 3;
+        signal = 46 & ch4_5 = 3 : 0;
+        TRUE : ch4_5;
+      esac;
+
+    next(ch3_4) := 
+      case
+        signal = 43 & ch2_3 = 3 & ch3_4 = 0 : 3;
+        signal = 44 & ch3_4 = 0 : 3;
+        signal = 45 & ch3_4 = 3 & ch4_5 = 0 : 0;
+        signal = 61 & ch17_3 = 3 & ch3_4 = 0 : 3;
+        TRUE : ch3_4;
+      esac;
+
+    next(ch16_2) := 
+      case
+        signal = 38 & ch16_2 = 0 : 2;
+        signal = 39 & ch16_2 = 2 & ch2_3 = 0 : 0;
+        signal = 59 & ch16_2 = 0 : 3;
+        signal = 60 & ch16_2 = 3 & ch2_3 = 0 : 0;
+        signal = 80 & ch16_2 = 0 : 4;
+        signal = 81 & ch16_2 = 4 & ch2_3 = 0 : 0;
+        signal = 101 & ch16_2 = 0 : 5;
+        signal = 102 & ch16_2 = 5 & ch2_3 = 0 : 0;
+        signal = 122 & ch16_2 = 0 : 6;
+        signal = 123 & ch16_2 = 6 & ch2_3 = 0 : 0;
+        signal = 143 & ch16_2 = 0 : 7;
+        signal = 144 & ch16_2 = 7 & ch2_3 = 0 : 0;
+        signal = 164 & ch16_2 = 0 : 8;
+        signal = 165 & ch16_2 = 8 & ch2_3 = 0 : 0;
+        TRUE : ch16_2;
+      esac;
+
+    next(ch12_13) := 
+      case
+        signal = 139 & ch11_12 = 7 & ch12_13 = 0 : 7;
+        signal = 140 & ch12_13 = 7 : 0;
+        TRUE : ch12_13;
+      esac;
+
+    next(ch15_17) := 
+      case
+        signal = 35 & ch14_15 = 2 & ch15_17 = 0 : 2;
+        signal = 36 & ch15_17 = 0 : 2;
+        signal = 37 & ch15_17 = 2 & ch17_3 = 0 : 0;
+        signal = 56 & ch14_15 = 3 & ch15_17 = 0 : 3;
+        signal = 57 & ch15_17 = 0 : 3;
+        signal = 58 & ch15_17 = 3 & ch17_3 = 0 : 0;
+        signal = 77 & ch14_15 = 4 & ch15_17 = 0 : 4;
+        signal = 78 & ch15_17 = 0 : 4;
+        signal = 79 & ch15_17 = 4 & ch17_7 = 0 : 0;
+        signal = 98 & ch14_15 = 5 & ch15_17 = 0 : 5;
+        signal = 99 & ch15_17 = 0 : 5;
+        signal = 100 & ch15_17 = 5 & ch17_7 = 0 : 0;
+        signal = 119 & ch14_15 = 6 & ch15_17 = 0 : 6;
+        signal = 120 & ch15_17 = 0 : 6;
+        signal = 121 & ch15_17 = 6 & ch17_11 = 0 : 0;
+        signal = 141 & ch15_17 = 0 : 7;
+        signal = 142 & ch15_17 = 7 & ch17_11 = 0 : 0;
+        TRUE : ch15_17;
+      esac;
+
+    next(ch17_3) := 
+      case
+        signal = 27 & ch7_17 = 2 & ch17_3 = 0 : 2;
+        signal = 32 & ch11_17 = 2 & ch17_3 = 0 : 2;
+        signal = 37 & ch15_17 = 2 & ch17_3 = 0 : 2;
+        signal = 40 & ch17_3 = 2 : 0;
+        signal = 48 & ch7_17 = 3 & ch17_3 = 0 : 3;
+        signal = 53 & ch11_17 = 3 & ch17_3 = 0 : 3;
+        signal = 58 & ch15_17 = 3 & ch17_3 = 0 : 3;
+        signal = 61 & ch17_3 = 3 & ch3_4 = 0 : 0;
+        TRUE : ch17_3;
+      esac;
+
+    next(ch2_3) := 
+      case
+        signal = 21 & ch1_2 = 2 & ch2_3 = 0 : 2;
+        signal = 22 & ch2_3 = 2 : 0;
+        signal = 39 & ch16_2 = 2 & ch2_3 = 0 : 2;
+        signal = 42 & ch1_2 = 3 & ch2_3 = 0 : 3;
+        signal = 43 & ch2_3 = 3 & ch3_4 = 0 : 0;
+        signal = 60 & ch16_2 = 3 & ch2_3 = 0 : 3;
+        signal = 63 & ch1_2 = 4 & ch2_3 = 0 : 4;
+        signal = 64 & ch2_3 = 4 & ch3_17 = 0 : 0;
+        signal = 81 & ch16_2 = 4 & ch2_3 = 0 : 4;
+        signal = 84 & ch1_2 = 5 & ch2_3 = 0 : 5;
+        signal = 85 & ch2_3 = 5 & ch3_17 = 0 : 0;
+        signal = 102 & ch16_2 = 5 & ch2_3 = 0 : 5;
+        signal = 105 & ch1_2 = 6 & ch2_3 = 0 : 6;
+        signal = 106 & ch2_3 = 6 & ch3_17 = 0 : 0;
+        signal = 123 & ch16_2 = 6 & ch2_3 = 0 : 6;
+        signal = 126 & ch1_2 = 7 & ch2_3 = 0 : 7;
+        signal = 127 & ch2_3 = 7 & ch3_17 = 0 : 0;
+        signal = 144 & ch16_2 = 7 & ch2_3 = 0 : 7;
+        signal = 147 & ch1_2 = 8 & ch2_3 = 0 : 8;
+        signal = 148 & ch2_3 = 8 & ch3_17 = 0 : 0;
+        signal = 165 & ch16_2 = 8 & ch2_3 = 0 : 8;
+        signal = 168 & ch1_2 = 9 & ch2_3 = 0 : 9;
+        signal = 169 & ch2_3 = 9 & ch3_17 = 0 : 0;
+        TRUE : ch2_3;
+      esac;
+
+    next(ch3_17) := 
+      case
+        signal = 0 & ch3_17 = 0 : 1;
+        signal = 1 & ch3_17 = 1 & ch17_15 = 0 : 0;
+        signal = 64 & ch2_3 = 4 & ch3_17 = 0 : 4;
+        signal = 65 & ch3_17 = 0 : 4;
+        signal = 66 & ch3_17 = 4 & ch17_7 = 0 : 0;
+        signal = 85 & ch2_3 = 5 & ch3_17 = 0 : 5;
+        signal = 86 & ch3_17 = 0 : 5;
+        signal = 87 & ch3_17 = 5 & ch17_7 = 0 : 0;
+        signal = 106 & ch2_3 = 6 & ch3_17 = 0 : 6;
+        signal = 107 & ch3_17 = 0 : 6;
+        signal = 108 & ch3_17 = 6 & ch17_11 = 0 : 0;
+        signal = 127 & ch2_3 = 7 & ch3_17 = 0 : 7;
+        signal = 128 & ch3_17 = 0 : 7;
+        signal = 129 & ch3_17 = 7 & ch17_11 = 0 : 0;
+        signal = 148 & ch2_3 = 8 & ch3_17 = 0 : 8;
+        signal = 149 & ch3_17 = 0 : 8;
+        signal = 150 & ch3_17 = 8 & ch17_15 = 0 : 0;
+        signal = 169 & ch2_3 = 9 & ch3_17 = 0 : 9;
+        signal = 170 & ch3_17 = 0 : 9;
+        signal = 171 & ch3_17 = 9 & ch17_15 = 0 : 0;
+        TRUE : ch3_17;
+      esac;
+
+    next(ch13_14) := 
+      case
+        signal = 12 & ch13_14 = 0 : 1;
+        signal = 13 & ch13_14 = 1 & ch14_15 = 0 : 0;
+        signal = 33 & ch13_14 = 0 : 2;
+        signal = 34 & ch13_14 = 2 & ch14_15 = 0 : 0;
+        signal = 54 & ch13_14 = 0 : 3;
+        signal = 55 & ch13_14 = 3 & ch14_15 = 0 : 0;
+        signal = 75 & ch13_14 = 0 : 4;
+        signal = 76 & ch13_14 = 4 & ch14_15 = 0 : 0;
+        signal = 96 & ch13_14 = 0 : 5;
+        signal = 97 & ch13_14 = 5 & ch14_15 = 0 : 0;
+        signal = 117 & ch13_14 = 0 : 6;
+        signal = 118 & ch13_14 = 6 & ch14_15 = 0 : 0;
+        signal = 161 & ch13_14 = 0 : 8;
+        signal = 162 & ch13_14 = 8 & ch14_15 = 0 : 0;
+        signal = 182 & ch13_14 = 0 : 9;
+        signal = 183 & ch13_14 = 9 & ch14_15 = 0 : 0;
+        TRUE : ch13_14;
+      esac;
+
+    next(ch17_7) := 
+      case
+        signal = 66 & ch3_17 = 4 & ch17_7 = 0 : 4;
+        signal = 74 & ch11_17 = 4 & ch17_7 = 0 : 4;
+        signal = 79 & ch15_17 = 4 & ch17_7 = 0 : 4;
+        signal = 82 & ch17_7 = 4 : 0;
+        signal = 87 & ch3_17 = 5 & ch17_7 = 0 : 5;
+        signal = 95 & ch11_17 = 5 & ch17_7 = 0 : 5;
+        signal = 100 & ch15_17 = 5 & ch17_7 = 0 : 5;
+        signal = 103 & ch17_7 = 5 & ch7_8 = 0 : 0;
+        TRUE : ch17_7;
+      esac;
+
+    next(ch17_15) := 
+      case
+        signal = 1 & ch3_17 = 1 & ch17_15 = 0 : 1;
+        signal = 6 & ch7_17 = 1 & ch17_15 = 0 : 1;
+        signal = 11 & ch11_17 = 1 & ch17_15 = 0 : 1;
+        signal = 19 & ch17_15 = 1 & ch15_16 = 0 : 0;
+        signal = 150 & ch3_17 = 8 & ch17_15 = 0 : 8;
+        signal = 155 & ch7_17 = 8 & ch17_15 = 0 : 8;
+        signal = 160 & ch11_17 = 8 & ch17_15 = 0 : 8;
+        signal = 166 & ch17_15 = 8 : 0;
+        signal = 171 & ch3_17 = 9 & ch17_15 = 0 : 9;
+        signal = 176 & ch7_17 = 9 & ch17_15 = 0 : 9;
+        signal = 181 & ch11_17 = 9 & ch17_15 = 0 : 9;
+        signal = 187 & ch17_15 = 9 & ch15_16 = 0 : 0;
+        TRUE : ch17_15;
+      esac;
+
+    next(ch11_17) := 
+      case
+        signal = 9 & ch10_11 = 1 & ch11_17 = 0 : 1;
+        signal = 10 & ch11_17 = 0 : 1;
+        signal = 11 & ch11_17 = 1 & ch17_15 = 0 : 0;
+        signal = 30 & ch10_11 = 2 & ch11_17 = 0 : 2;
+        signal = 31 & ch11_17 = 0 : 2;
+        signal = 32 & ch11_17 = 2 & ch17_3 = 0 : 0;
+        signal = 51 & ch10_11 = 3 & ch11_17 = 0 : 3;
+        signal = 52 & ch11_17 = 0 : 3;
+        signal = 53 & ch11_17 = 3 & ch17_3 = 0 : 0;
+        signal = 72 & ch10_11 = 4 & ch11_17 = 0 : 4;
+        signal = 73 & ch11_17 = 0 : 4;
+        signal = 74 & ch11_17 = 4 & ch17_7 = 0 : 0;
+        signal = 94 & ch11_17 = 0 : 5;
+        signal = 95 & ch11_17 = 5 & ch17_7 = 0 : 0;
+        signal = 158 & ch10_11 = 8 & ch11_17 = 0 : 8;
+        signal = 159 & ch11_17 = 0 : 8;
+        signal = 160 & ch11_17 = 8 & ch17_15 = 0 : 0;
+        signal = 179 & ch10_11 = 9 & ch11_17 = 0 : 9;
+        signal = 180 & ch11_17 = 0 : 9;
+        signal = 181 & ch11_17 = 9 & ch17_15 = 0 : 0;
+        TRUE : ch11_17;
+      esac;
+
+    next(ch10_11) := 
+      case
+        signal = 8 & ch9_10 = 1 & ch10_11 = 0 : 1;
+        signal = 9 & ch10_11 = 1 & ch11_17 = 0 : 0;
+        signal = 29 & ch9_10 = 2 & ch10_11 = 0 : 2;
+        signal = 30 & ch10_11 = 2 & ch11_17 = 0 : 0;
+        signal = 50 & ch9_10 = 3 & ch10_11 = 0 : 3;
+        signal = 51 & ch10_11 = 3 & ch11_17 = 0 : 0;
+        signal = 71 & ch9_10 = 4 & ch10_11 = 0 : 4;
+        signal = 72 & ch10_11 = 4 & ch11_17 = 0 : 0;
+        signal = 115 & ch9_10 = 6 & ch10_11 = 0 : 6;
+        signal = 116 & ch10_11 = 6 : 0;
+        signal = 136 & ch9_10 = 7 & ch10_11 = 0 : 7;
+        signal = 137 & ch10_11 = 7 & ch11_12 = 0 : 0;
+        signal = 157 & ch9_10 = 8 & ch10_11 = 0 : 8;
+        signal = 158 & ch10_11 = 8 & ch11_17 = 0 : 0;
+        signal = 178 & ch9_10 = 9 & ch10_11 = 0 : 9;
+        signal = 179 & ch10_11 = 9 & ch11_17 = 0 : 0;
+        TRUE : ch10_11;
+      esac;
+
+    next(ch5_6) := 
+      case
+        signal = 2 & ch5_6 = 0 : 1;
+        signal = 3 & ch5_6 = 1 & ch6_7 = 0 : 0;
+        signal = 23 & ch5_6 = 0 : 2;
+        signal = 24 & ch5_6 = 2 & ch6_7 = 0 : 0;
+        signal = 67 & ch5_6 = 0 : 4;
+        signal = 68 & ch5_6 = 4 & ch6_7 = 0 : 0;
+        signal = 88 & ch5_6 = 0 : 5;
+        signal = 89 & ch5_6 = 5 & ch6_7 = 0 : 0;
+        signal = 109 & ch5_6 = 0 : 6;
+        signal = 110 & ch5_6 = 6 & ch6_7 = 0 : 0;
+        signal = 130 & ch5_6 = 0 : 7;
+        signal = 131 & ch5_6 = 7 & ch6_7 = 0 : 0;
+        signal = 151 & ch5_6 = 0 : 8;
+        signal = 152 & ch5_6 = 8 & ch6_7 = 0 : 0;
+        signal = 172 & ch5_6 = 0 : 9;
+        signal = 173 & ch5_6 = 9 & ch6_7 = 0 : 0;
+        TRUE : ch5_6;
+      esac;
+
+    next(ch6_7) := 
+      case
+        signal = 3 & ch5_6 = 1 & ch6_7 = 0 : 1;
+        signal = 4 & ch6_7 = 1 & ch7_17 = 0 : 0;
+        signal = 24 & ch5_6 = 2 & ch6_7 = 0 : 2;
+        signal = 25 & ch6_7 = 2 & ch7_17 = 0 : 0;
+        signal = 68 & ch5_6 = 4 & ch6_7 = 0 : 4;
+        signal = 69 & ch6_7 = 4 : 0;
+        signal = 89 & ch5_6 = 5 & ch6_7 = 0 : 5;
+        signal = 90 & ch6_7 = 5 & ch7_8 = 0 : 0;
+        signal = 110 & ch5_6 = 6 & ch6_7 = 0 : 6;
+        signal = 111 & ch6_7 = 6 & ch7_17 = 0 : 0;
+        signal = 131 & ch5_6 = 7 & ch6_7 = 0 : 7;
+        signal = 132 & ch6_7 = 7 & ch7_17 = 0 : 0;
+        signal = 152 & ch5_6 = 8 & ch6_7 = 0 : 8;
+        signal = 153 & ch6_7 = 8 & ch7_17 = 0 : 0;
+        signal = 173 & ch5_6 = 9 & ch6_7 = 0 : 9;
+        signal = 174 & ch6_7 = 9 & ch7_17 = 0 : 0;
+        TRUE : ch6_7;
+      esac;
+
+    next(ch8_9) := 
+      case
+        signal = 92 & ch7_8 = 5 & ch8_9 = 0 : 5;
+        signal = 93 & ch8_9 = 5 : 0;
+        TRUE : ch8_9;
+      esac;
+
+    next(ch9_10) := 
+      case
+        signal = 7 & ch9_10 = 0 : 1;
+        signal = 8 & ch9_10 = 1 & ch10_11 = 0 : 0;
+        signal = 28 & ch9_10 = 0 : 2;
+        signal = 29 & ch9_10 = 2 & ch10_11 = 0 : 0;
+        signal = 49 & ch9_10 = 0 : 3;
+        signal = 50 & ch9_10 = 3 & ch10_11 = 0 : 0;
+        signal = 70 & ch9_10 = 0 : 4;
+        signal = 71 & ch9_10 = 4 & ch10_11 = 0 : 0;
+        signal = 114 & ch9_10 = 0 : 6;
+        signal = 115 & ch9_10 = 6 & ch10_11 = 0 : 0;
+        signal = 135 & ch9_10 = 0 : 7;
+        signal = 136 & ch9_10 = 7 & ch10_11 = 0 : 0;
+        signal = 156 & ch9_10 = 0 : 8;
+        signal = 157 & ch9_10 = 8 & ch10_11 = 0 : 0;
+        signal = 177 & ch9_10 = 0 : 9;
+        signal = 178 & ch9_10 = 9 & ch10_11 = 0 : 0;
+        TRUE : ch9_10;
+      esac;
+
+    next(ch1_2) := 
+      case
+        signal = 20 & ch1_2 = 0 : 2;
+        signal = 21 & ch1_2 = 2 & ch2_3 = 0 : 0;
+        signal = 41 & ch1_2 = 0 : 3;
+        signal = 42 & ch1_2 = 3 & ch2_3 = 0 : 0;
+        signal = 62 & ch1_2 = 0 : 4;
+        signal = 63 & ch1_2 = 4 & ch2_3 = 0 : 0;
+        signal = 83 & ch1_2 = 0 : 5;
+        signal = 84 & ch1_2 = 5 & ch2_3 = 0 : 0;
+        signal = 104 & ch1_2 = 0 : 6;
+        signal = 105 & ch1_2 = 6 & ch2_3 = 0 : 0;
+        signal = 125 & ch1_2 = 0 : 7;
+        signal = 126 & ch1_2 = 7 & ch2_3 = 0 : 0;
+        signal = 146 & ch1_2 = 0 : 8;
+        signal = 147 & ch1_2 = 8 & ch2_3 = 0 : 0;
+        signal = 167 & ch1_2 = 0 : 9;
+        signal = 168 & ch1_2 = 9 & ch2_3 = 0 : 0;
+        TRUE : ch1_2;
+      esac;
+
+    next(ch7_17) := 
+      case
+        signal = 4 & ch6_7 = 1 & ch7_17 = 0 : 1;
+        signal = 5 & ch7_17 = 0 : 1;
+        signal = 6 & ch7_17 = 1 & ch17_15 = 0 : 0;
+        signal = 25 & ch6_7 = 2 & ch7_17 = 0 : 2;
+        signal = 26 & ch7_17 = 0 : 2;
+        signal = 27 & ch7_17 = 2 & ch17_3 = 0 : 0;
+        signal = 47 & ch7_17 = 0 : 3;
+        signal = 48 & ch7_17 = 3 & ch17_3 = 0 : 0;
+        signal = 111 & ch6_7 = 6 & ch7_17 = 0 : 6;
+        signal = 112 & ch7_17 = 0 : 6;
+        signal = 113 & ch7_17 = 6 & ch17_11 = 0 : 0;
+        signal = 132 & ch6_7 = 7 & ch7_17 = 0 : 7;
+        signal = 133 & ch7_17 = 0 : 7;
+        signal = 134 & ch7_17 = 7 & ch17_11 = 0 : 0;
+        signal = 153 & ch6_7 = 8 & ch7_17 = 0 : 8;
+        signal = 154 & ch7_17 = 0 : 8;
+        signal = 155 & ch7_17 = 8 & ch17_15 = 0 : 0;
+        signal = 174 & ch6_7 = 9 & ch7_17 = 0 : 9;
+        signal = 175 & ch7_17 = 0 : 9;
+        signal = 176 & ch7_17 = 9 & ch17_15 = 0 : 0;
+        TRUE : ch7_17;
+      esac;
+
+    next(ch15_16) := 
+      case
+        signal = 14 & ch14_15 = 1 & ch15_16 = 0 : 1;
+        signal = 15 & ch15_16 = 0 : 1;
+        signal = 16 & ch15_16 = 1 & ch16_1 = 0 : 0;
+        signal = 19 & ch17_15 = 1 & ch15_16 = 0 : 1;
+        signal = 184 & ch14_15 = 9 & ch15_16 = 0 : 9;
+        signal = 185 & ch15_16 = 0 : 9;
+        signal = 186 & ch15_16 = 9 : 0;
+        signal = 187 & ch17_15 = 9 & ch15_16 = 0 : 9;
+        TRUE : ch15_16;
+      esac;
+
+    next(ch14_15) := 
+      case
+        signal = 13 & ch13_14 = 1 & ch14_15 = 0 : 1;
+        signal = 14 & ch14_15 = 1 & ch15_16 = 0 : 0;
+        signal = 34 & ch13_14 = 2 & ch14_15 = 0 : 2;
+        signal = 35 & ch14_15 = 2 & ch15_17 = 0 : 0;
+        signal = 55 & ch13_14 = 3 & ch14_15 = 0 : 3;
+        signal = 56 & ch14_15 = 3 & ch15_17 = 0 : 0;
+        signal = 76 & ch13_14 = 4 & ch14_15 = 0 : 4;
+        signal = 77 & ch14_15 = 4 & ch15_17 = 0 : 0;
+        signal = 97 & ch13_14 = 5 & ch14_15 = 0 : 5;
+        signal = 98 & ch14_15 = 5 & ch15_17 = 0 : 0;
+        signal = 118 & ch13_14 = 6 & ch14_15 = 0 : 6;
+        signal = 119 & ch14_15 = 6 & ch15_17 = 0 : 0;
+        signal = 162 & ch13_14 = 8 & ch14_15 = 0 : 8;
+        signal = 163 & ch14_15 = 8 : 0;
+        signal = 183 & ch13_14 = 9 & ch14_15 = 0 : 9;
+        signal = 184 & ch14_15 = 9 & ch15_16 = 0 : 0;
+        TRUE : ch14_15;
+      esac;
+
+    next(ch16_1) := 
+      case
+        signal = 16 & ch15_16 = 1 & ch16_1 = 0 : 1;
+        signal = 17 & ch16_1 = 0 : 1;
+        signal = 18 & ch16_1 = 1 : 0;
+        TRUE : ch16_1;
+      esac;
+
+  INVARSPEC ( 
+    ( ch10_11 = 7 & ch11_12 = 0 ) | 
+    ( ch11_12 = 0 ) | 
+    ( ch11_12 = 7 & ch12_13 = 0 ) | 
+    ( ch17_11 = 7 & ch11_12 = 0 ) | 
+    ( ch3_17 = 6 & ch17_11 = 0 ) | 
+    ( ch7_17 = 6 & ch17_11 = 0 ) | 
+    ( ch15_17 = 6 & ch17_11 = 0 ) | 
+    ( ch17_11 = 6 ) | 
+    ( ch3_17 = 7 & ch17_11 = 0 ) | 
+    ( ch7_17 = 7 & ch17_11 = 0 ) | 
+    ( ch15_17 = 7 & ch17_11 = 0 ) | 
+    ( ch6_7 = 5 & ch7_8 = 0 ) | 
+    ( ch7_8 = 0 ) | 
+    ( ch7_8 = 5 & ch8_9 = 0 ) | 
+    ( ch17_7 = 5 & ch7_8 = 0 ) | 
+    ( ch3_4 = 3 & ch4_5 = 0 ) | 
+    ( ch4_5 = 3 ) | 
+    ( ch2_3 = 3 & ch3_4 = 0 ) | 
+    ( ch3_4 = 0 ) | 
+    ( ch17_3 = 3 & ch3_4 = 0 ) | 
+    ( ch16_2 = 0 ) | 
+    ( ch16_2 = 2 & ch2_3 = 0 ) | 
+    ( ch16_2 = 3 & ch2_3 = 0 ) | 
+    ( ch16_2 = 4 & ch2_3 = 0 ) | 
+    ( ch16_2 = 5 & ch2_3 = 0 ) | 
+    ( ch16_2 = 6 & ch2_3 = 0 ) | 
+    ( ch16_2 = 7 & ch2_3 = 0 ) | 
+    ( ch16_2 = 8 & ch2_3 = 0 ) | 
+    ( ch12_13 = 7 ) | 
+    ( ch14_15 = 2 & ch15_17 = 0 ) | 
+    ( ch15_17 = 0 ) | 
+    ( ch15_17 = 2 & ch17_3 = 0 ) | 
+    ( ch14_15 = 3 & ch15_17 = 0 ) | 
+    ( ch15_17 = 3 & ch17_3 = 0 ) | 
+    ( ch14_15 = 4 & ch15_17 = 0 ) | 
+    ( ch15_17 = 4 & ch17_7 = 0 ) | 
+    ( ch14_15 = 5 & ch15_17 = 0 ) | 
+    ( ch15_17 = 5 & ch17_7 = 0 ) | 
+    ( ch14_15 = 6 & ch15_17 = 0 ) | 
+    ( ch7_17 = 2 & ch17_3 = 0 ) | 
+    ( ch11_17 = 2 & ch17_3 = 0 ) | 
+    ( ch17_3 = 2 ) | 
+    ( ch7_17 = 3 & ch17_3 = 0 ) | 
+    ( ch11_17 = 3 & ch17_3 = 0 ) | 
+    ( ch1_2 = 2 & ch2_3 = 0 ) | 
+    ( ch2_3 = 2 ) | 
+    ( ch1_2 = 3 & ch2_3 = 0 ) | 
+    ( ch1_2 = 4 & ch2_3 = 0 ) | 
+    ( ch2_3 = 4 & ch3_17 = 0 ) | 
+    ( ch1_2 = 5 & ch2_3 = 0 ) | 
+    ( ch2_3 = 5 & ch3_17 = 0 ) | 
+    ( ch1_2 = 6 & ch2_3 = 0 ) | 
+    ( ch2_3 = 6 & ch3_17 = 0 ) | 
+    ( ch1_2 = 7 & ch2_3 = 0 ) | 
+    ( ch2_3 = 7 & ch3_17 = 0 ) | 
+    ( ch1_2 = 8 & ch2_3 = 0 ) | 
+    ( ch2_3 = 8 & ch3_17 = 0 ) | 
+    ( ch1_2 = 9 & ch2_3 = 0 ) | 
+    ( ch2_3 = 9 & ch3_17 = 0 ) | 
+    ( ch3_17 = 0 ) | 
+    ( ch3_17 = 1 & ch17_15 = 0 ) | 
+    ( ch3_17 = 4 & ch17_7 = 0 ) | 
+    ( ch3_17 = 5 & ch17_7 = 0 ) | 
+    ( ch3_17 = 8 & ch17_15 = 0 ) | 
+    ( ch3_17 = 9 & ch17_15 = 0 ) | 
+    ( ch13_14 = 0 ) | 
+    ( ch13_14 = 1 & ch14_15 = 0 ) | 
+    ( ch13_14 = 2 & ch14_15 = 0 ) | 
+    ( ch13_14 = 3 & ch14_15 = 0 ) | 
+    ( ch13_14 = 4 & ch14_15 = 0 ) | 
+    ( ch13_14 = 5 & ch14_15 = 0 ) | 
+    ( ch13_14 = 6 & ch14_15 = 0 ) | 
+    ( ch13_14 = 8 & ch14_15 = 0 ) | 
+    ( ch13_14 = 9 & ch14_15 = 0 ) | 
+    ( ch11_17 = 4 & ch17_7 = 0 ) | 
+    ( ch17_7 = 4 ) | 
+    ( ch11_17 = 5 & ch17_7 = 0 ) | 
+    ( ch7_17 = 1 & ch17_15 = 0 ) | 
+    ( ch11_17 = 1 & ch17_15 = 0 ) | 
+    ( ch17_15 = 1 & ch15_16 = 0 ) | 
+    ( ch7_17 = 8 & ch17_15 = 0 ) | 
+    ( ch11_17 = 8 & ch17_15 = 0 ) | 
+    ( ch17_15 = 8 ) | 
+    ( ch7_17 = 9 & ch17_15 = 0 ) | 
+    ( ch11_17 = 9 & ch17_15 = 0 ) | 
+    ( ch17_15 = 9 & ch15_16 = 0 ) | 
+    ( ch10_11 = 1 & ch11_17 = 0 ) | 
+    ( ch11_17 = 0 ) | 
+    ( ch10_11 = 2 & ch11_17 = 0 ) | 
+    ( ch10_11 = 3 & ch11_17 = 0 ) | 
+    ( ch10_11 = 4 & ch11_17 = 0 ) | 
+    ( ch10_11 = 8 & ch11_17 = 0 ) | 
+    ( ch10_11 = 9 & ch11_17 = 0 ) | 
+    ( ch9_10 = 1 & ch10_11 = 0 ) | 
+    ( ch9_10 = 2 & ch10_11 = 0 ) | 
+    ( ch9_10 = 3 & ch10_11 = 0 ) | 
+    ( ch9_10 = 4 & ch10_11 = 0 ) | 
+    ( ch9_10 = 6 & ch10_11 = 0 ) | 
+    ( ch10_11 = 6 ) | 
+    ( ch9_10 = 7 & ch10_11 = 0 ) | 
+    ( ch9_10 = 8 & ch10_11 = 0 ) | 
+    ( ch9_10 = 9 & ch10_11 = 0 ) | 
+    ( ch5_6 = 0 ) | 
+    ( ch5_6 = 1 & ch6_7 = 0 ) | 
+    ( ch5_6 = 2 & ch6_7 = 0 ) | 
+    ( ch5_6 = 4 & ch6_7 = 0 ) | 
+    ( ch5_6 = 5 & ch6_7 = 0 ) | 
+    ( ch5_6 = 6 & ch6_7 = 0 ) | 
+    ( ch5_6 = 7 & ch6_7 = 0 ) | 
+    ( ch5_6 = 8 & ch6_7 = 0 ) | 
+    ( ch5_6 = 9 & ch6_7 = 0 ) | 
+    ( ch6_7 = 1 & ch7_17 = 0 ) | 
+    ( ch6_7 = 2 & ch7_17 = 0 ) | 
+    ( ch6_7 = 4 ) | 
+    ( ch6_7 = 6 & ch7_17 = 0 ) | 
+    ( ch6_7 = 7 & ch7_17 = 0 ) | 
+    ( ch6_7 = 8 & ch7_17 = 0 ) | 
+    ( ch6_7 = 9 & ch7_17 = 0 ) | 
+    ( ch8_9 = 5 ) | 
+    ( ch9_10 = 0 ) | 
+    ( ch1_2 = 0 ) | 
+    ( ch7_17 = 0 ) | 
+    ( ch14_15 = 1 & ch15_16 = 0 ) | 
+    ( ch15_16 = 0 ) | 
+    ( ch15_16 = 1 & ch16_1 = 0 ) | 
+    ( ch14_15 = 9 & ch15_16 = 0 ) | 
+    ( ch15_16 = 9 ) | 
+    ( ch14_15 = 8 ) | 
+    ( ch16_1 = 0 ) | 
+    ( ch16_1 = 1 )
+  )
