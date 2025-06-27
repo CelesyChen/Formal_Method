@@ -1,6 +1,7 @@
 use crate::parser::ssvmparser::*;
 use core::panic;
-use std::{collections::{HashMap}, hash::{Hash}};
+use std::{collections::{HashMap, HashSet, VecDeque}, hash::{Hash}};
+
 use crate::ctl::{parse_ast, ast::CtlAst};
 
 #[derive(Debug)]
@@ -31,7 +32,6 @@ pub struct Range {
 } 
 
 pub fn to_symbol_table ( ast: &AstNode ) -> Vec<SymbolTable> {
-
 
   match ast {
     AstNode::Program(vec) => {
@@ -103,9 +103,10 @@ fn per_module (
                 }
               }
     
-              // 实际上应该是冗余的，当时写文法时多了
-              AssignExpr::Single(_) => {
-                unimplemented!() 
+              AssignExpr::Single(atoms) => {
+                for atom in atoms {
+                  var.next.insert(proc_atom(atom, &var.mapping), Expr::True(true));
+                }
               }
             }
           }
@@ -168,5 +169,49 @@ fn proc_atom (
     Atom::Num(v) => {
       Val::Num(*v as u32)
     }
+  }
+}
+
+impl SymbolTable {
+  pub fn suggest_variable_order(&self) -> Vec<String> {
+    use std::collections::{HashMap, HashSet};
+
+    let mut freq: HashMap<String, usize> = HashMap::new();
+
+    for (name, var) in &self.contain {
+      *freq.entry(name.clone()).or_insert(0) += var.next.len();
+
+      for (val, cond) in &var.next {
+        collect_vars_from_expr(cond, &mut freq);
+
+        if let Val::Id(other_name) = val {
+          *freq.entry(other_name.clone()).or_insert(0) += 1;
+        }
+      }
+
+      *freq.entry(name.clone()).or_insert(0) += 1;
+    }
+
+    let mut vars: Vec<_> = freq.into_iter().collect();
+    vars.sort_by(|a, b| b.1.cmp(&a.1)); 
+
+    vars.into_iter().map(|(v, _)| v).collect()
+  }
+}
+
+
+fn collect_vars_from_expr(expr: &Expr, freq: &mut HashMap<String, usize>) {
+  match expr {
+    Expr::Eq(var, atom) | Expr::Ne(var, atom) => {
+      *freq.entry(var.clone()).or_insert(0) += 1;
+      if let Atom::Id(s) = atom {
+        *freq.entry(s.clone()).or_insert(0) += 1;
+      }
+    }
+    Expr::And(l, r) | Expr::Or(l, r) => {
+      collect_vars_from_expr(l, freq);
+      collect_vars_from_expr(r, freq);
+    }
+    Expr::True(_) => {}
   }
 }

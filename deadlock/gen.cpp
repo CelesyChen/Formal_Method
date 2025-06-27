@@ -149,6 +149,8 @@ void Graph::INIT() {
         } else {
           printf(" &\n");
         }
+      } else {
+        printf("    ch%d_%d := 0;\n", i + 1, to + 1);
       }
     }
   }
@@ -238,6 +240,22 @@ void Graph::WRITE() {
       printf("        TRUE : %s;\n", ch.c_str());
       printf("      esac;\n\n");
     }
+  } else {
+    printf("    signal := {");
+    for (int i = 0; i <= signal_cnt - 1; ++i) {
+      printf("%d, ", i);
+    }
+    printf("%d};\n\n", signal_cnt);
+
+    for (auto& [ch, cases] : assign_cases) {
+      printf("    %s := \n", ch.c_str());
+      printf("      case\n");
+      for (auto& [ fire, rule, target] : cases) {
+        printf("        signal = %d & %s : %d;\n", fire, rule.c_str(), target);
+      }
+      printf("        TRUE : %s;\n", ch.c_str());
+      printf("      esac;\n\n");
+    }
   }
 
 
@@ -263,6 +281,27 @@ void Graph::WRITE() {
       }
     }
     cout << "\n  )\n";
+  } else {
+    cout << "  CTLSPEC AG(";
+    bool start = 1;
+    set<string> ss;
+    for (auto& [ch, cases] : assign_cases) {
+      for (auto& [ _, rule, _] : cases) {
+        if (ss.find(rule) != ss.end()) continue;
+
+        if (start) {
+          printf(" \n");
+          start = 0;
+        } else {
+          printf(" | \n");
+        }
+        
+        printf("    ( %s )", rule.c_str());
+        ss.emplace(rule);
+        
+      }
+    }
+    cout << "\n  );\n";
   }
 
 }

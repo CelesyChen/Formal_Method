@@ -33,21 +33,17 @@ Int = { "int" }
 Enum = { "enum" }
 
 case_assign = { ^"case" ~ case_item+ ~ ^"esac" }
-single_assign = { atom } // 这里需要在语义分析时确认类型正确
+single_assign = { atom_list } // 这里需要在语义分析时确认类型正确
 
-case_item = {  expr ~ ":" ~ atom_list ~ ";" }
+case_item = {  (expr | TRUE) ~ ":" ~ atom_list ~ ";" }
 
 expr    = { or_expr ~ (And ~ or_expr)* }
 or_expr     = { eq_expr ~ (Or ~ eq_expr)* }
-eq_expr = { primary_expr ~ ((Eq | Neq) ~ primary_expr)* }
-primary_expr = {
-    "(" ~ expr ~ ")"
-  | atom
-}
+eq_expr = { identifier ~ (Eq | Neq) ~ atom }
 
 And = { "&" }
 Or = { "|" }
-Eq = { "==" }
+Eq = { "=" }
 Neq = { "!=" }
 
 atom_list = { atom_set | atom }

@@ -1,0 +1,41 @@
+MODULE main
+  VAR
+    ch1_2: int[0..2];
+    ch2_3: int[0..2];
+    ch3_1: int[0..2];
+    signal: int[0..4];
+  INIT
+    ch1_2 := 0;
+    ch2_3 := 0;
+    ch3_1 := 0;
+  ASSIGN
+    signal := {0, 1, 2, 3, 4};
+
+    ch1_2 := 
+      case
+        signal = 3 & ch1_2 = 0 : 2;
+        signal = 4 & ch1_2 = 2 : 0;
+        TRUE : ch1_2;
+      esac;
+
+    ch3_1 := 
+      case
+        signal = 1 & ch2_3 = 1 & ch3_1 = 0 : 1;
+        signal = 2 & ch3_1 = 1 : 0;
+        TRUE : ch3_1;
+      esac;
+
+    ch2_3 := 
+      case
+        signal = 0 & ch2_3 = 0 : 1;
+        signal = 1 & ch2_3 = 1 & ch3_1 = 0 : 0;
+        TRUE : ch2_3;
+      esac;
+
+  CTLSPEC AG( 
+    ( ch1_2 = 0 ) | 
+    ( ch1_2 = 2 ) | 
+    ( ch2_3 = 1 & ch3_1 = 0 ) | 
+    ( ch3_1 = 1 ) | 
+    ( ch2_3 = 0 )
+  );
