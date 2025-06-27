@@ -74,7 +74,8 @@ fn main() {
     for ctl in st.specs {
       // println!("{:#?}", &ctl);
       let a = manager.ctl_to_bdd(&ctl, trans);
-      manager.print_bdd(a, 0);
+      // manager.print_bdd(a, 0);
+      let _ = manager.export_dot(a, "tests/bdd.dot");
     }
     
   }

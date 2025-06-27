@@ -1,5 +1,4 @@
-use std::{collections::HashMap, fmt::Debug, hash::Hash};
-use petgraph::graph::Node;
+use std::{collections::{HashMap, VecDeque, HashSet}, fmt::Debug, hash::Hash, fs::File, io::{Write, BufWriter}};
 
 use crate::table::{Range, SymbolTable, Variable, Val};
 use crate::parser::ssvmparser::{Expr as ssvmExpr, Atom as ssvmAtom};
@@ -481,15 +480,25 @@ impl BddManager {
         self.eval_ctl_eu(phi_l, phi_r, trans)
       }
 
-      // 其他时序逻辑以后逐步加
-      _ => todo!("CTL operator not implemented yet: {:?}", ast)
+      CtlAst::EG(inner) => {
+        let bdd = self.ctl_to_bdd(inner, trans);
+        self.eval_ctl_eg(bdd, trans)
+      }
+
+      CtlAst::AX(inner) => {
+        let bdd = self.ctl_to_bdd(inner, trans);
+        self.eval_ctl_ex(bdd, trans)
+      }
+
+      // 其它不应该存在
+      _ => unreachable!()
     }
   }
 
   pub fn eval_ctl_eu(&mut self, phi_l: NodeId, phi_r: NodeId, trans: NodeId) -> NodeId {
-    // μZ . phi2 ∨ (phi1 ∧ EX(Z))
-    let mut z = phi_r;  // Initial guess: Z₀ = ϕ₂
+    let mut z = phi_r;  
     let mut iter = 0;
+    println!("iteration started:");
     loop {
       println!("{}", iter);
       iter += 1;
@@ -505,7 +514,7 @@ impl BddManager {
       let phi1_and_pre = self.apply(OpType::And, phi_l, pre_states);
       let new_z = self.apply(OpType::Or, phi_r, phi1_and_pre);
 
-      println!("new:{} old:{}", new_z.0, z.0);
+      // println!("new:{} old:{}", new_z.0, z.0);
       if new_z == z {
         break;
       }
@@ -516,7 +525,40 @@ impl BddManager {
     z
   }
 
-  // 将 BDD 中所有 primed 变量（如 x'）替换成 unprimed（如 x）
+  pub fn eval_ctl_ex(&mut self, phi: NodeId, trans: NodeId) -> NodeId {
+    let phi_prime = self.rename_vars(phi, true);
+    let trans_and_phi = self.apply(OpType::And, trans, phi_prime);
+    let result = self.exist_quantify(trans_and_phi);
+
+    result
+  }
+
+  pub fn eval_ctl_eg(&mut self, phi: NodeId, trans: NodeId) -> NodeId {
+    let mut z = self.get_true_node();
+    let mut iter = 0;
+    println!("iteration started:");
+
+    loop {
+      println!("EG iter {}", iter);
+      iter += 1;
+
+      let z_prime = self.rename_vars(z, true);
+
+      let pre_image = self.apply(OpType::And, trans, z_prime);
+      let pre_states = self.exist_quantify(pre_image);
+
+      let new_z = self.apply(OpType::And, phi, pre_states);
+
+      if new_z == z {
+        break;
+      }
+
+      z = new_z;
+    }
+
+    z
+  }
+
   pub fn rename_vars(&mut self, node: NodeId, to_prime: bool) -> NodeId {
 
     let res = match self.get_node(node).clone() {
@@ -610,5 +652,54 @@ impl BddManager {
         self.print_bdd(*high, indent + 2);
       }
     }
+  }
+
+  pub fn export_dot(&self, root: NodeId, path: &str) -> std::io::Result<()> {
+    let mut file = BufWriter::new(File::create(path)?);
+
+    writeln!(file, "digraph BDD {{")?;
+    writeln!(file, "  rankdir=LR;")?;
+    writeln!(file, "  node [shape=circle];")?;
+
+    let mut visited = HashSet::new();
+    self.write_dot_node(root, &mut visited, &mut file)?;
+
+    writeln!(file, "}}")?;
+    Ok(())
+  }
+
+  fn write_dot_node<W: Write>(
+    &self,
+    node: NodeId,
+    visited: &mut HashSet<NodeId>,
+    out: &mut W,
+  ) -> std::io::Result<()> {
+    if visited.contains(&node) {
+      return Ok(());
+    }
+    visited.insert(node);
+
+    match self.get_node(node) {
+      BddNode::Terminal(val) => {
+        writeln!(
+          out,
+          "  {} [label=\"{}\", shape=box];",
+          node.0,
+          if *val { "1" } else { "0" }
+        )?;
+      }
+      BddNode::NonTerminal { variable, low, high } => {
+        let name = &self.bv.idx_to_var[*variable];
+        let offset = (*variable as u32 - self.bv.var_to_idx.get(name).unwrap().start) / 2;
+        writeln!(out, "  {} [label=\"{}_{}\"];", node.0, name, offset)?;
+
+        writeln!(out, "  {} -> {} [style=dashed];", node.0, low.0)?;
+        writeln!(out, "  {} -> {} [style=solid];", node.0, high.0)?;
+
+        self.write_dot_node(*low, visited, out)?;
+        self.write_dot_node(*high, visited, out)?;
+      }
+    }
+    Ok(())
   }
 }
